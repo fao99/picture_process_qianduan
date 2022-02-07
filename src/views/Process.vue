@@ -6,7 +6,6 @@
       <el-button @click="goList" color="#800000" style="color: white">选择/重选图像</el-button>
       <el-button @click="downloadPic" color="#800000" style="color: white; padding-left: 30px">下载图像</el-button>
       <img id="img1" src="" crossorigin="anonymous" style="width: 60px; height: 40px;position: absolute;object-fit: cover; margin-left: 50px">
-      <img id="img2" src="" crossorigin="anonymous" style="width: 60px; height: 40px;position: absolute;object-fit: cover; margin-left: 150px">
       <div style="margin-top: 10px; height: 20px">
         <!--   提示上传图片     -->
         <el-alert v-if="this.$route.params.id==null" title="请先选择图像！" type="warning" show-icon
@@ -15,13 +14,12 @@
     </div>
 
     <!--  canvas图像展示区域    -->
-    <div style="width: 99%; margin-top: 50px">
-      <canvas id="canvas1" width="550" height="550"></canvas>
+    <div style="width: 99%; margin-top: 40px">
       <canvas id="canvas2" width="550" height="550"></canvas>
     </div>
 
     <!--  滤镜单选框   -->
-    <div style="margin-top: 30px">
+    <div style="margin-top: 50px">
       <el-radio-group v-model="radioList" @change="change">
         <el-radio-button label="原图" v-model="checkedNames"></el-radio-button>
         <el-radio-button label="黑白" v-model="checkedNames"></el-radio-button>
@@ -36,7 +34,8 @@
     <el-button @click="huanYuan" color="#800000" style="color: white; margin-top: 20px">还原</el-button>
     <el-button @click="da" color="#800000" style="color: white; margin-top: 20px">放大</el-button>
     <el-button @click="xuanZhuan" color="#800000" style="color: white; margin-top: 20px">顺时针旋转90°</el-button>
-    <el-button @click="suoFang" color="#800000" style="color: white; margin-top: 20px">鼠标滚动缩放</el-button>
+    <el-button @click="suoFang" color="#800000" style="color: white; margin-top: 20px">任意角度旋转加缩放</el-button>
+    <el-button @click="huiHua" color="#800000" style="color: white; margin-top: 20px">开启绘画</el-button>
   </div>
 </template>
 
@@ -65,22 +64,16 @@ export default {
         //根据id查询图片并加载给canvas
         request.post("/process/getById/" + id).then(res => {//获取对应图片
           console.log(res.data)
-          //把图片地址给两个canvas
-          let canvas1 = document.getElementById("canvas1");
-          let ctx1 = canvas1.getContext("2d");
           let canvas2 = document.getElementById("canvas2");
           let ctx2 = canvas2.getContext("2d");
           ctx2.save();//当前状态保存
 
           let img = document.getElementById("img1")
           img.src = res.data.src
-          let img2 = document.getElementById("img2")
-          img2.src = res.data.src
-
 
           img.onload = function () {//等图片加载后再操作
-            ctx1.drawImage(img, 0, 0, canvas1.width, canvas2.height);// 重新获取原始图像数据点信息
-            ctx2.drawImage(img, 0, 0, canvas2.width, canvas2.height);
+            // ctx1.drawImage(img, 0, 0, canvas1.width, canvas2.height);
+            ctx2.drawImage(img, 0, 0, canvas2.width, canvas2.height);// 重新获取原始图像数据点信息
           }
         })
       }
@@ -352,17 +345,33 @@ export default {
       }
 
     },
-    fabricInit(){
-      let canvas = new fabric.Canvas("canvas1"); //可以通过鼠标方法缩小,旋转
+    suoFang(){
+      console.log("任意角度旋转")
+      let canvas=document.getElementById("canvas2")
+      canvas.style.marginLeft="500px"//左移500px
+
+      canvas = new fabric.Canvas("canvas2"); //声明画布
       let img = document.getElementById("img1");
       let image = new fabric.Image(img, {
-
+        left: 30,
+        top: 60,
       });
       canvas.add(image);
 
     },
-    suoFang(){
-      this.fabricInit()
+    huiHua(){
+      console.log("绘画")
+      let canvas=document.getElementById("canvas2")
+      canvas.style.marginLeft="500px"//左移500px
+
+      canvas = new fabric.Canvas("canvas2"); //声明画布
+      let img = document.getElementById("img1");
+      let image = new fabric.Image(img, {
+        left: 30,
+        top: 60,
+      });
+      canvas.add(image);
+      canvas.isDrawingMode = true
 
     }
   }
@@ -371,15 +380,10 @@ export default {
 
 
 <style scoped>
-#canvas1 {
-  box-shadow: 5px 5px 5px #aaa;
-  cursor: text;
-  margin-left: 100px;
-}
 
 #canvas2 {
   box-shadow: 5px 5px 5px #aaa;
   cursor: text;
-  margin-left: 300px;
+  margin-left: 500px;
 }
 </style>
