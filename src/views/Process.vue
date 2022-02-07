@@ -36,7 +36,6 @@
     <el-button @click="huanYuan" color="#800000" style="color: white; margin-top: 20px">还原</el-button>
     <el-button @click="da" color="#800000" style="color: white; margin-top: 20px">放大</el-button>
     <el-button @click="xuanZhuan" color="#800000" style="color: white; margin-top: 20px">顺时针旋转90°</el-button>
-    <el-button @click="niXuanZhuan" color="#800000" style="color: white; margin-top: 20px">逆时针旋转90°</el-button>
     <el-button @click="suoFang" color="#800000" style="color: white; margin-top: 20px">鼠标滚动缩放</el-button>
   </div>
 </template>
@@ -53,8 +52,6 @@ export default {
       radioList: [],//滤镜复选框
       checkedNames: [],
       tempWidth: '550', //缩放时临时变量
-
-
 
     }
   },
@@ -73,12 +70,14 @@ export default {
           let ctx1 = canvas1.getContext("2d");
           let canvas2 = document.getElementById("canvas2");
           let ctx2 = canvas2.getContext("2d");
+          ctx2.save();//当前状态保存
 
           let img = document.getElementById("img1")
           img.src = res.data.src
           let img2 = document.getElementById("img2")
           img2.src = res.data.src
-          this.originalImgSrc = img.src
+
+
           img.onload = function () {//等图片加载后再操作
             ctx1.drawImage(img, 0, 0, canvas1.width, canvas2.height);// 重新获取原始图像数据点信息
             ctx2.drawImage(img, 0, 0, canvas2.width, canvas2.height);
@@ -274,23 +273,27 @@ export default {
       }
       ctx2.putImageData(tempImgData, 0, 0)
     },
-    reload() {
-      let img = new Image()
-      let canvas2 = document.getElementById("canvas2")
-      let context = canvas2.getContext("2d")
-      img.src = canvas2.toDataURL("image/png");
-      context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
-
-    },
     huanYuan() {//还原
+
       console.log("还原")
       let canvas2 = document.getElementById("canvas2")
       let context = canvas2.getContext("2d")
       context.restore()
-      let img = document.getElementById("img2")
-      console.log(img)
-      context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
 
+      let id = this.$route.params.id//获取到之前的id
+      if (id != null) {
+        //根据id查询图片并加载给canvas
+        request.post("/process/getById/" + id).then(res => {//获取对应图片
+
+          let img = document.getElementById("img1")
+          img.src = res.data.src
+
+          img.onload = function () {//等图片加载后再操作
+            context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
+          }
+        })
+      }
+      context.save()
     },
     da() {//放大
       console.log("放大")
@@ -301,55 +304,52 @@ export default {
       let width = canvas2.width
       let height = canvas2.height
 
-
       //先平移
       context.transform(1, 0, 0, 1, -width / 2, -height / 2);
       //水平方向放大2倍，垂直方向放大2倍
       context.transform(2, 0, 0, 2, 0, 0);
 
-      img.src = canvas2.toDataURL("image/png");
-      img.onload = function () {//等图片加载后再操作
-        context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
+      let id = this.$route.params.id//获取到之前的id
+      if (id != null) {
+        //根据id查询图片并加载给canvas
+        request.post("/process/getById/" + id).then(res => {//获取对应图片
+
+          let img = document.getElementById("img1")
+          img.src = res.data.src
+
+          img.onload = function () {//等图片加载后再操作
+            context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
+          }
+        })
       }
+
     },
     xuanZhuan() {//顺时针旋转
       console.log("顺时针旋转")
-      let img = document.getElementById("img1")
+      //let img = document.getElementById("img1")
       let canvas2 = document.getElementById("canvas2")
       let context = canvas2.getContext("2d")
       let tempImgData = context.getImageData(0, 0, canvas2.width, canvas2.height)
       let width = canvas2.width
       let height = canvas2.height
-
 
       context.translate(width / 2, height / 2)
       context.rotate(Math.PI / 180 * 90)
       context.translate(-width / 2, -height / 2)
-      img.src = canvas2.toDataURL("image/png");
-      img.onload = function () {//等图片加载后再操作
-        context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
+
+      let id = this.$route.params.id//获取到之前的id
+      if (id != null) {
+        //根据id查询图片并加载给canvas
+        request.post("/process/getById/" + id).then(res => {//获取对应图片
+
+          let img = document.getElementById("img1")
+          img.src = res.data.src
+
+          img.onload = function () {//等图片加载后再操作
+            context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
+          }
+        })
       }
-
-    },
-    niXuanZhuan() {//逆时针旋转
-      console.log("逆时针旋转")
-
-      let canvas2 = document.getElementById("canvas2")
-      let context = canvas2.getContext("2d")
-      let tempImgData = context.getImageData(0, 0, canvas2.width, canvas2.height)
-      let width = canvas2.width
-      let height = canvas2.height
-
-      context.translate(width / 2, height / 2)
-      context.transform(Math.cos(90),Math.sin(90), -Math.sin(90),Math.cos(90),0,0)
-      context.translate(-width / 2, -height / 2)
-
-      let img = new Image()
-      img.src = canvas2.toDataURL("image/png");
-      img.onload = function () {//等图片加载后再操作
-        context.drawImage(img, 0, 0, canvas2.width, canvas2.height);
-      }
-      this.reload()
 
     },
     fabricInit(){
