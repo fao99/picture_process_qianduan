@@ -2,20 +2,18 @@
   <div style="padding: 10px">
     <!--    功能区域-->
     <div style="margin: 10px 0">
-      <el-button @click="add" color="#800000" style="color: white">上传图像</el-button>
+      <el-button @click="add" color="#00FF00" style="color: white;margin-left: 500px">上传图像</el-button>
+      <el-input v-model="search" placeholder="请输入图片id" style="width: 20%;margin-left: 300px" clearable/>
+      <!--    搜索区域-->
+      <el-button @click="load" color="#00FF00" style="margin-left: 5px;color: white">查询</el-button>
     </div>
 
 
-    <!--    搜索区域-->
-    <div style="margin: 10px 0">
-      <el-input v-model="search" placeholder="请输入图片id" style="width: 30%" clearable/>
-      <el-button @click="load" color="#800000" style="margin-left: 5px;color: white">查询</el-button>
-    </div>
 
     <!--    表格区域-->
     <!--    表格内容-->
-    <el-table :data="tableData" stripe style="width: 99%">
-      <el-table-column prop="id" label="ID"  sortable />
+    <el-table :data="tableData" stripe style="width: 99.5%">
+      <el-table-column prop="id" label="ID"  sortable  />
       <el-table-column prop="pic" label="图像" >
         <template #default="scope">
           <el-image
@@ -33,7 +31,7 @@
           <el-button  @click="goProcess(scope.row.id)">处理图像</el-button>
           <el-popconfirm title="确定要删除吗?" @confirm="handleDelete(scope.row.id)" icon-color="#800000" confirmButtonType="danger">
             <template #reference>
-              <el-button color="#800000" style="color: white">删除图像</el-button>
+              <el-button color="#00FF00" style="color: white">删除图像</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -203,7 +201,7 @@ export default {
 
 .avatar-uploader-icon {
   font-size: 50px;
-  color: #800000;
+  color: #c71585;
   width: 300px;
   height: 300px;
   text-align: center;

@@ -3,9 +3,10 @@
 
     <!--    功能区域-->
     <div style="margin: 10px 0">
-      <el-button @click="goList" color="#800000" style="color: white">选择/重选图像</el-button>
-      <el-button @click="downloadPic" color="#800000" style="color: white; padding-left: 30px">下载图像</el-button>
-      <img id="img1" src="" crossorigin="anonymous" style="width: 60px; height: 40px;position: absolute;object-fit: cover; margin-left: 50px">
+      <el-button @click="goList" color="#32CD32" style="color: white;margin-left: 100px">选择/重选图像</el-button>
+      <el-button @click="downloadPic" color="#32CD32" style="color: white; padding-left: 30px;margin-left: 900px">下载图像</el-button>
+      <img id="img1" src="" crossorigin="anonymous"
+           style="width: 60px; height: 40px;position: absolute;object-fit: cover; margin-left: 50px;display: none">
       <div style="margin-top: 10px; height: 20px">
         <!--   提示上传图片     -->
         <el-alert v-if="this.$route.params.id==null" title="请先选择图像！" type="warning" show-icon
@@ -13,35 +14,50 @@
       </div>
     </div>
 
-    <!--  canvas图像展示区域    -->
-    <div style="width: 99%; margin-top: 40px">
-      <canvas id="canvas2" width="550" height="550"></canvas>
+    <!-- flex进行布局   -->
+    <div style="display: flex;justify-content: space-between;">
+
+      <!--操作区域      -->
+      <div style="margin-left: 100px">
+        <!--  滤镜单选框   -->
+        <div style="margin-top: 50px">
+          <p class="p4">独特滤镜</p>
+          <el-radio-group v-model="radioList" @change="change">
+            <el-radio-button label="原图" v-model="checkedNames"></el-radio-button>
+            <el-radio-button label="黑白" v-model="checkedNames"></el-radio-button>
+            <el-radio-button label="反色" v-model="checkedNames"></el-radio-button>
+            <el-radio-button label="灰度" v-model="checkedNames"></el-radio-button>
+            <el-radio-button label="模糊" v-model="checkedNames"></el-radio-button>
+            <el-radio-button label="浮雕" v-model="checkedNames"></el-radio-button>
+          </el-radio-group>
+        </div>
+
+        <!--图像几何变化    -->
+        <p class="p5">炫酷操作</p>
+        <el-button @click="huanYuan" color="#228B22" style="color: white; margin-top: 20px" round>还原</el-button>
+        <el-button @click="da" color="#228B22" style="color: white; margin-top: 20px" round>放大</el-button>
+        <el-button @click="xuanZhuan" color="#228B22" style="color: white; margin-top: 20px" round>顺时针旋转90°</el-button>
+        <el-button @click="suoFang" color="#228B22" style="color: white; margin-top: 20px" round>任意角度旋转加缩放</el-button>
+        <!--    <el-button @click="huiHua" color="#228B22" style="color: white; margin-top: 20px" round>开启绘画</el-button>-->
+      </div>
+
+
+      <!--  canvas图像展示区域    -->
+      <div style="width: 85%; margin-top: 40px">
+        <canvas id="canvas2" width="550" height="550"></canvas>
+      </div>
+
+
     </div>
 
-    <!--  滤镜单选框   -->
-    <div style="margin-top: 50px">
-      <el-radio-group v-model="radioList" @change="change">
-        <el-radio-button label="原图" v-model="checkedNames"></el-radio-button>
-        <el-radio-button label="黑白" v-model="checkedNames"></el-radio-button>
-        <el-radio-button label="反色" v-model="checkedNames"></el-radio-button>
-        <el-radio-button label="灰度" v-model="checkedNames"></el-radio-button>
-        <el-radio-button label="模糊" v-model="checkedNames"></el-radio-button>
-        <el-radio-button label="浮雕" v-model="checkedNames"></el-radio-button>
-      </el-radio-group>
-    </div>
 
-    <!--图像几何变化    -->
-    <el-button @click="huanYuan" color="#800000" style="color: white; margin-top: 20px">还原</el-button>
-    <el-button @click="da" color="#800000" style="color: white; margin-top: 20px">放大</el-button>
-    <el-button @click="xuanZhuan" color="#800000" style="color: white; margin-top: 20px">顺时针旋转90°</el-button>
-    <el-button @click="suoFang" color="#800000" style="color: white; margin-top: 20px">任意角度旋转加缩放</el-button>
-    <el-button @click="huiHua" color="#800000" style="color: white; margin-top: 20px">开启绘画</el-button>
+
   </div>
 </template>
 
 <script>
 import request from "@/utils/request";
-import { fabric } from 'fabric'
+import {fabric} from 'fabric'
 
 export default {
   name: "Process",
@@ -345,10 +361,10 @@ export default {
       }
 
     },
-    suoFang(){
+    suoFang() {
       console.log("任意角度旋转")
-      let canvas=document.getElementById("canvas2")
-      canvas.style.marginLeft="500px"//左移500px
+      let canvas = document.getElementById("canvas2")
+      canvas.style.marginLeft = "500px"//左移500px
 
       canvas = new fabric.Canvas("canvas2"); //声明画布
       let img = document.getElementById("img1");
@@ -359,10 +375,10 @@ export default {
       canvas.add(image);
 
     },
-    huiHua(){
+    huiHua() {
       console.log("绘画")
-      let canvas=document.getElementById("canvas2")
-      canvas.style.marginLeft="500px"//左移500px
+      let canvas = document.getElementById("canvas2")
+      canvas.style.marginLeft = "500px"//左移500px
 
       canvas = new fabric.Canvas("canvas2"); //声明画布
       let img = document.getElementById("img1");
@@ -386,4 +402,22 @@ export default {
   cursor: text;
   margin-left: 500px;
 }
+
+.p4 {
+  color: gold;
+  font-size: 22px;
+  margin-bottom: 20px;
+  margin-top: 80px;
+  letter-spacing: 0;
+  text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
+}
+
+.p5 {
+  color: green;
+  font-size: 22px;
+  margin-top: 120px;
+  letter-spacing: 0;
+  text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
+}
+
 </style>
