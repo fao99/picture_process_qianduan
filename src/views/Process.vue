@@ -372,6 +372,7 @@ export default {
         left: 30,
         top: 60,
       });
+
       canvas.add(image);
 
     },
